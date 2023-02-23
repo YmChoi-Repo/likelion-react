@@ -1,13 +1,13 @@
 import React from 'react';
-import './App.css';
+import styles from './App.module.css';
+import { ReactComponent as ReactLogo } from 'assets/logo.svg';
 import {
   CounterFunction,
   CounterClass,
   Button,
   LifeCycle,
-} from '../components';
-
-import { API_ENDPOINT } from '../components/LifeCycle/LifeCycle';
+  API_ENDPOINT,
+} from 'components';
 
 function renderComponents(isVisible) {
   if (isVisible) {
@@ -43,8 +43,26 @@ function App() {
 
   // 사이드 이펙트 처리 훅
   React.useEffect(() => {
-    console.log('componentDidMount');
-    // console.log('componentDidUpdate');
+    // console.log('componentDidMount');
+
+    // fecth data
+    // async function???????
+    // 이펙트 함수 안에서 비동기 함수를 작성하는 건 가능하다
+    async function fetchData() {
+      // const data = await (await fetch(API_ENDPOINT)).json();
+
+      try {
+        const response = await fetch(API_ENDPOINT);
+        const data = await response.json();
+        setData(data.results);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
   React.useEffect(() => {
@@ -66,8 +84,10 @@ function App() {
     updateIsVisibleComponents(!isVisibleComponents);
   };
 
+  // class's render method
   return (
-    <div className="App">
+    <div className={styles.container}>
+      <ReactLogo className={styles.logo} title="리액트 로고" />
       <button type="button" onClick={handleToggleVisible}>
         {isVisibleComponents.toString()}
       </button>
